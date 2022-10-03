@@ -6,12 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class Ranking extends AppCompatActivity {
 
     private TextView minIntentosText;
     private int minNumIntentos;
+    private Button buttonVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,25 +23,23 @@ public class Ranking extends AppCompatActivity {
         setContentView(R.layout.activity_ranking);
 
         minIntentosText = findViewById(R.id.textViewMinIntentos);
+        minIntentosText.setText("");
+        for(Record record : MainActivity.recordsList){
+            minIntentosText.append(record.getUserName() + ": " + record.getPoints() + "\n");
+        }
 
-        Intent intent = getIntent();
-        minNumIntentos = intent.getIntExtra("minIntentos", 0);
+        buttonVolver = findViewById(R.id.buttonVolver);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(Ranking.this);
-        builder.setMessage("Quieres introducir la puntuación?").setTitle("Ranking").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        buttonVolver.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                minIntentosText.setText("MinIntentos: " + minNumIntentos);
-            }
-        }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                minIntentosText.setText("MinIntentos: " + 0);
+            public void onClick(View view) {
+
+                Intent intent = new Intent(Ranking.this, MainActivity.class);
+                startActivity(intent);
+
             }
         });
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
 
     }
 }

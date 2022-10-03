@@ -3,7 +3,6 @@ package com.example.numrandom;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,14 +15,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static ArrayList<Record> recordsList = new ArrayList<Record>();
     private int numIntentos = 0;
-    private int minNumIntentos = 100;
     private int numRandom;
     private TextView textIntentos;
     private TextView textResult;
@@ -38,27 +36,25 @@ public class MainActivity extends AppCompatActivity {
 
         numRandom = random.nextInt(11);
 
-        Button button = findViewById(R.id.button2);
+        Button buttonEnviar = findViewById(R.id.buttonEnviar);
         Button buttonRanking = findViewById(R.id.buttonRanking);
         EditText inputText = findViewById(R.id.inputText);
         textResult = findViewById(R.id.textresult);
         textIntentos = findViewById(R.id.textIntentos);
         textResult.setMovementMethod(new ScrollingMovementMethod());
 
-        button.setOnClickListener(new View.OnClickListener(){
+        buttonEnviar.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("Has adivinado el número").setTitle("CORRECTO").setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder alertaAcertado = new AlertDialog.Builder(MainActivity.this);
+                alertaAcertado.setMessage("Has adivinado el número").setTitle("CORRECTO").setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        resetGame();
+                        saveRanking();
                     }
                 });
-
-                AlertDialog dialog = builder.create();
 
                 String message = "";
                 Editable editable = inputText.getText();
@@ -71,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                     message = "El número " + userNum + " es más grande";
                 }else{
                     message = "Acertaste el número!";
-                    dialog.show();
+                    alertaAcertado.show();
                 }
 
                 numIntentos++;
@@ -86,13 +82,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         buttonRanking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(MainActivity.this, Ranking.class);
-                intent.putExtra("minIntentos",minNumIntentos ); //pasar valores
                 startActivity(intent);
             }
         });
@@ -102,11 +95,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void resetGame(){
         numRandom = random.nextInt(11);
-        if(numIntentos < minNumIntentos){
-            minNumIntentos = numIntentos;
-        }
         numIntentos = 0;
         textIntentos.setText("Intentos: " + numIntentos);
         textResult.setText("");
     }
+
+
+    private void saveRanking(){
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("SAVE RANKING");
+        alert.setMessage("¿Quieres introducir la puntuación?");
+        EditText inputName = new EditText(this);
+        alert.setView(inputName);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Record userRecord =  new Record(inputName.getText().toString(), numIntentos);
+                recordsList.add(userRecord);
+                resetGame();
+            }
+        });
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                resetGame();
+            }
+        });
+
+        alert.show();
+    }
+
 }
