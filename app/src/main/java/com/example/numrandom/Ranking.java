@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Ranking extends AppCompatActivity {
 
     private TextView minIntentosText;
@@ -24,6 +26,9 @@ public class Ranking extends AppCompatActivity {
 
         minIntentosText = findViewById(R.id.textViewMinIntentos);
         minIntentosText.setText("");
+
+        ordenarRanking(MainActivity.recordsList);
+
         for(Record record : MainActivity.recordsList){
             minIntentosText.append(record.getUserName() + ": " + record.getPoints() + "\n");
         }
@@ -42,4 +47,21 @@ public class Ranking extends AppCompatActivity {
 
 
     }
+
+    private void ordenarRanking(ArrayList<Record> list){
+
+        for(int i = 0; i < list.size(); i++){
+            for(int j = 0; j < list.size() - 1; j++){
+
+                if(list.get(j).getPoints() > list.get(j + 1).getPoints()){
+                    Record record = list.get(j);
+                    list.set(j, list.get(j + 1));
+                    list.set(j + 1, record);
+                }
+            }
+        }
+
+    }
+
+
 }

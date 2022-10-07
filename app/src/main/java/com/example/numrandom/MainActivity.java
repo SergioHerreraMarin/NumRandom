@@ -92,14 +92,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void resetGame(){
         numRandom = random.nextInt(11);
         numIntentos = 0;
         textIntentos.setText("Intentos: " + numIntentos);
         textResult.setText("");
     }
-
 
     private void saveRanking(){
 
